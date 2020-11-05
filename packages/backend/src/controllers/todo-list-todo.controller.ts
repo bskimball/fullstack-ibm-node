@@ -1,0 +1,111 @@
+import {
+  Count,
+  CountSchema,
+  Filter,
+  repository,
+  Where,
+} from "@loopback/repository";
+import {
+  del,
+  get,
+  getModelSchemaRef,
+  getWhereSchemaFor,
+  param,
+  patch,
+  post,
+  requestBody,
+} from "@loopback/rest";
+import { TodoList, Todo } from "../models";
+import { TodoListRepository } from "../repositories";
+import { authenticate } from "@loopback/authentication";
+
+@authenticate("jwt")
+export class TodoListTodoController {
+  constructor(
+    @repository(TodoListRepository)
+    protected todoListRepository: TodoListRepository,
+  ) {}
+
+  @get("/todo-lists/{id}/todos", {
+    responses: {
+      "200": {
+        description: "Array of TodoList has many Todo",
+        content: {
+          "application/json": {
+            schema: { type: "array", items: getModelSchemaRef(Todo) },
+          },
+        },
+      },
+    },
+  })
+  async find(
+    @param.path.string("id") id: string,
+    @param.query.object("filter") filter?: Filter<Todo>,
+  ): Promise<Todo[]> {
+    return this.todoListRepository.todos(id).find(filter);
+  }
+
+  @post("/todo-lists/{id}/todos", {
+    responses: {
+      "200": {
+        description: "TodoList model instance",
+        content: { "application/json": { schema: getModelSchemaRef(Todo) } },
+      },
+    },
+  })
+  async create(
+    @param.path.string("id") id: typeof TodoList.prototype.id,
+    @requestBody({
+      content: {
+        "application/json": {
+          schema: getModelSchemaRef(Todo, {
+            title: "NewTodoInTodoList",
+            exclude: ["id"],
+            // optional: ["todoListId"],
+          }),
+        },
+      },
+    })
+    todo: Omit<Todo, "id">,
+  ): Promise<Todo> {
+    return this.todoListRepository.todos(id).create(todo);
+  }
+
+  @patch("/todo-lists/{id}/todos", {
+    responses: {
+      "200": {
+        description: "TodoList.Todo PATCH success count",
+        content: { "application/json": { schema: CountSchema } },
+      },
+    },
+  })
+  async patch(
+    @param.path.string("id") id: string,
+    @requestBody({
+      content: {
+        "application/json": {
+          schema: getModelSchemaRef(Todo, { partial: true }),
+        },
+      },
+    })
+    todo: Partial<Todo>,
+    @param.query.object("where", getWhereSchemaFor(Todo)) where?: Where<Todo>,
+  ): Promise<Count> {
+    return this.todoListRepository.todos(id).patch(todo, where);
+  }
+
+  @del("/todo-lists/{id}/todos", {
+    responses: {
+      "200": {
+        description: "TodoList.Todo DELETE success count",
+        content: { "application/json": { schema: CountSchema } },
+      },
+    },
+  })
+  async delete(
+    @param.path.string("id") id: string,
+    @param.query.object("where", getWhereSchemaFor(Todo)) where?: Where<Todo>,
+  ): Promise<Count> {
+    return this.todoListRepository.todos(id).delete(where);
+  }
+}

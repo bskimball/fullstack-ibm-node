@@ -1,0 +1,8 @@
+node_modules
+yarn.lock
+yarn-error.log
+database
+Examples
+.next
+packages/backend/dist
+.idea
