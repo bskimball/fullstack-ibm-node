@@ -1,6 +1,6 @@
 # Fullstack IBM Node Starter Template
 
-We needed a full stack node app starter that can run sepcifically on the IBMi. As we evaluated options, loopback was a clear choice because it's maintained by IBM and has built in support for the DB2 database via juggler. We wanted to use React on the frontend, because it's widely used, has a lot of supporting libraries, and we would be able to share components with a react-native app. The choice there was next.js which provides SSR, and an excellent developer experience.
+We needed a full stack node app starter that can run specifically on the IBMi. As we evaluated options, loopback was a clear choice because it's maintained by IBM and has built-in support for the DB2 database via juggler. We also wanted to use React on the frontend, because it's widely used, has a lot of supporting libraries, and we would be able to share components with a react-native app. To provide advanced functionality for the frontend we chose next.js which provides SSR, and an excellent developer experience.
 
 I wanted a monorepo to showcase what a fullstack Node app running on the IBMi would look like. I decided to use Yarn workspaces to create the monorepo, and keep the frontend builds separate from the backend builds. The frontend is using Chakra (pre-release at the time of this writing), for it's focus on accessibility flexibility (I also like that it took some queues from tailwind). We are also using typescript.
 
